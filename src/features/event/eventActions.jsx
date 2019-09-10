@@ -173,3 +173,27 @@ export const getEventsForDashboard = (lastEvent) => {
 
 
 
+//adding comment/chat to firebase
+export const addEventComment = (eventId, values) => {
+    return async (dispatch, getState, {getFirebase}) => {
+        const firebase = getFirebase();
+        //getting logged in user profile
+        const profile = getState().firebase.profile;
+        //getting current logged in user id.
+        const user = firebase.auth().currentUser;
+
+        let newComment = {
+            displayName:profile.displayName,
+            photoURL: profile.photoURL || 'assets/user.png',
+            uid:user.uid,
+            text:values.comment,
+            date: Date.now()
+        }
+        try{
+            await firebase.push(`event_chat/${eventId}`, newComment);
+        }catch(error){
+            console.log(error);
+            toastr.error('Oops!', 'Error sending comment');
+        }
+    }
+}
