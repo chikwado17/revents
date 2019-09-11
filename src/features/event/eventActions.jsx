@@ -174,7 +174,7 @@ export const getEventsForDashboard = (lastEvent) => {
 
 
 //adding comment/chat to firebase
-export const addEventComment = (eventId, values) => {
+export const addEventComment = (eventId, values, parentId) => {
     return async (dispatch, getState, {getFirebase}) => {
         const firebase = getFirebase();
         //getting logged in user profile
@@ -183,6 +183,7 @@ export const addEventComment = (eventId, values) => {
         const user = firebase.auth().currentUser;
 
         let newComment = {
+            parentId:parentId,
             displayName:profile.displayName,
             photoURL: profile.photoURL || 'assets/user.png',
             uid:user.uid,
