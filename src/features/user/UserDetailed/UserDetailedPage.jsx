@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { UserDetailedQueries } from '../userDetailedQueries';
 import LazyLoad from 'react-lazyload';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
-import { getUserEvents } from '../userActions';
+import { getUserEvents, followUser, unfollowUser } from '../userActions';
 
 
 
@@ -23,7 +23,9 @@ const panes = [
 
 
 const mapDispatchToProps = {
-    getUserEvents
+    getUserEvents,
+    followUser,
+    unfollowUser
 }
 
 const mapStateToProps = (state,ownProps) => {
@@ -49,7 +51,8 @@ const mapStateToProps = (state,ownProps) => {
         requesting: state.firestore.status.requesting,
         //for filtering past,future and host event
         events:state.events,
-        eventLoading:state.async.loading
+        eventLoading:state.async.loading,
+        following: state.firestore.ordered.following
     }
 };
 
@@ -69,12 +72,17 @@ class UserDetailedPage extends Component {
     }
 
     render() {
-        const { profile, photos, auth, match, requesting, events, eventLoading  } = this.props;
+        const { profile, photos, auth, match, requesting, events, eventLoading, followUser, following, unfollowUser  } = this.props;
         //if the current authentication matches the auth params id
         const isCurrentUser = auth.uid === match.params.id;
 
         //loading component from checking requesting status from firestore status
         const loading = Object.values(requesting).some((a) => a === true);
+
+        const isFollowing = !isEmpty(following)
+
+
+
 
         if(loading) return <LoadingComponent inverted={true} />
 
@@ -149,11 +157,28 @@ class UserDetailedPage extends Component {
 
                     <Segment>
                         {/* checking if it the currentuser the assign follow us or edit profile */}
-                            {isCurrentUser ? (
+                        {isCurrentUser && (
                             <Button color='teal' as={Link} to={'/settings'} fluid basic content='Edit Profile'/> 
-                            ) : (
-                                <Button color='teal'  fluid basic content='Follow User'/>
-                            )}
+                        )}
+                            
+                        {/*passing profile to followUSer to get details of the user his following */}
+                        {!isCurrentUser && !isFollowing &&
+                            
+                            <Button 
+                                onClick={() => followUser(profile)} 
+                                color='teal'  
+                                fluid basic 
+                                content='Follow User'/>
+                        }
+
+                        {!isCurrentUser && isFollowing &&
+                            <Button 
+                                onClick={() => unfollowUser(profile)} 
+                                color='teal'  
+                                fluid basic 
+                                content='UnFollow'/>
+                        }
+
                     </Segment>
                 </Grid.Column>
 
@@ -208,5 +233,5 @@ class UserDetailedPage extends Component {
 
 export default compose(
     connect(mapStateToProps,mapDispatchToProps),
-    firestoreConnect((auth, userUid) => UserDetailedQueries(auth, userUid))
+    firestoreConnect((auth, userUid, match) => UserDetailedQueries(auth, userUid, match))
 )(UserDetailedPage);

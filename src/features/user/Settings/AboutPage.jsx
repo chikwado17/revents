@@ -24,7 +24,7 @@ const interests = [
   { key: 'travel', text: 'Travel', value: 'travel' }
 ];
 
-const AboutPage = ({ pristine, submitting , handleSubmit, updateProfile}) => {
+const AboutPage = ({ submitting , handleSubmit, updateProfile}) => {
   return (
     <Segment>
       <Header dividing size="large" content="About Me" />
@@ -74,7 +74,7 @@ const AboutPage = ({ pristine, submitting , handleSubmit, updateProfile}) => {
           placeholder="Country of Origin"
         />
         <Divider />
-        <Button disabled={pristine || submitting} size="large" positive content="Update Profile" />
+        <Button disabled={ submitting} size="large" positive content="Update Profile" />
       </Form>
     </Segment>
   );

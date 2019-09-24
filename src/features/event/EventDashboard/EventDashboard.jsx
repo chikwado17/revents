@@ -19,7 +19,6 @@ const query = [
 ]
 
 
-
 const mapStateToProps = (state) => ({
     
     //getting events from redux

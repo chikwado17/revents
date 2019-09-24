@@ -60,7 +60,8 @@ const mapStateToProps = (state) => {
   return {
     //reduxForm has access to initial values which will populate the intial values to our form field.
    initialValues:event,
-   event
+   event,
+   loading: state.async.loading
   }
 
 }
@@ -111,7 +112,7 @@ class EventForm extends Component {
 
 
 
-    onFormSubmit = (values)  => {
+    onFormSubmit = async (values)  => {
 
        //for venue input form field.
        values.venueLatLng = this.state.venueLatLng;
@@ -119,7 +120,7 @@ class EventForm extends Component {
         //this will check if initialvalues.id matched the selected event to update. then update
         //the initialvalues coming from redux form property
         if(this.props.initialValues.id){
-          this.props.updateEvent(values);
+         await this.props.updateEvent(values);
           this.props.history.goBack();
         }else{
           //creating new event using firestore action createEvent
@@ -148,7 +149,7 @@ class EventForm extends Component {
 
     render() {
      
-      const { invalid, submitting, prestine, event, cancelToggle } = this.props;
+      const { invalid, submitting, prestine, event, cancelToggle, loading } = this.props;
         return (
 
           <Grid>
@@ -184,10 +185,10 @@ class EventForm extends Component {
                       />
 
 
-                    <Button disabled={invalid || submitting || prestine} positive type="submit">
+                    <Button loading={loading} disabled={invalid || submitting || prestine} positive type="submit">
                       Submit
                     </Button>
-                    <Button onClick={ this.props.history.goBack} type="button">Cancel</Button>
+                    <Button disabled={loading} onClick={ this.props.history.goBack} type="button">Cancel</Button>
 
                     <Button
                       onClick={() => cancelToggle(!event.cancelled, event.id)}

@@ -10,6 +10,9 @@ export const objectToArray = (object) => {
 }
 
 
+
+//creating new event for firestore
+//this is for create newEvent inside the eventactions
 export const createNewEvent = (user, photoURL, event) => {
     event.date = moment(event.date).toDate();
     return {
