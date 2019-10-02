@@ -10,7 +10,7 @@ import EventDetailedSidebar from './EventDetailedSidebar';
 import { objectToArray, createDataTree } from '../../../app/common/utils/helpers';
 import { goingToEvent, cancelGoingToEvent } from '../../user/userActions';
 import { addEventComment } from '../eventActions';
-
+import { openModal } from '../../modals/modalActions';
 
 //checking if there is events from firestore then populate it to our page
 const mapStateToProps = (state, ownProps) => {
@@ -34,7 +34,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = {
     goingToEvent,
     cancelGoingToEvent,
-    addEventComment
+    addEventComment,
+    openModal
 }
 
 class EventDetailedPage extends Component {
@@ -52,7 +53,7 @@ class EventDetailedPage extends Component {
     }
 
     render() {
-        const {loading, event, auth, goingToEvent, cancelGoingToEvent, addEventComment, eventChat } = this.props;
+        const {openModal, loading, event, auth, goingToEvent, cancelGoingToEvent, addEventComment, eventChat } = this.props;
         //using the convered object to array for attendees
         const attendees = event && event.attendees && objectToArray(event.attendees);
         const isHost = event.hostUid === auth.uid;
@@ -61,13 +62,28 @@ class EventDetailedPage extends Component {
         //sorting event chat to have its own reply assigned to it
         const chatTree = !isEmpty(eventChat) && createDataTree(eventChat);
 
+        //for anonimouse users
+        const authenticated = auth.isLoaded && !auth.isEmpty;
 
         return (
             <Grid>
                 <Grid.Column  width={10}>
-                    <EventDetailedHeader loading={loading} event={event}  isHost={isHost} isGoing={isGoing} goingToEvent={goingToEvent} cancelGoingToEvent={cancelGoingToEvent} />
+                    <EventDetailedHeader 
+                    loading={loading} 
+                    event={event}  
+                    isHost={isHost} 
+                    isGoing={isGoing} 
+                    goingToEvent={goingToEvent} 
+                    cancelGoingToEvent={cancelGoingToEvent} 
+                    openModal={openModal}
+                    authenticated={authenticated}
+                    />
+
+
                     <EventDetailedInfo event={event}/>
-                    <EventDetailedChat addEventComment={addEventComment} eventId={event.id}  eventChat={chatTree} />
+
+                    {authenticated &&
+                    <EventDetailedChat addEventComment={addEventComment} eventId={event.id}  eventChat={chatTree} />}
                 </Grid.Column>
 
                 <Grid.Column  width={6}>

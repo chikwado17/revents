@@ -97,19 +97,19 @@ class PhotosPage extends Component {
 
 
     //method to handle the deleting of photos
-    handlePhotoDelete = (photo) => async => {
+    handlePhotoDelete = (photo) => async () => {
         try{
-            this.props.deletePhoto(photo);
+           await this.props.deletePhoto(photo);
         }catch(error){
             toastr.error('Oops!', error.message);
         }
     }
 
 //method to set main profile photo
-    handleSetMainPhoto = (photo) => async => {
+    handleSetMainPhoto = (photo) => async () => {
         try {
 
-            this.props.setMainPhoto(photo);
+           await this.props.setMainPhoto(photo);
         }catch(error){
             toastr.error('Oops!', error.message);
         }

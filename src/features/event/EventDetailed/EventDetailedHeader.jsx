@@ -18,7 +18,7 @@ const eventImageTextStyle = {
 };
 
 
-const EventDetailedHeader = ({event, isGoing, isHost, goingToEvent, cancelGoingToEvent, loading}) => {
+const EventDetailedHeader = ({event, isGoing, isHost, goingToEvent, cancelGoingToEvent, loading, authenticated, openModal}) => {
 
 
   //coverting date
@@ -57,12 +57,13 @@ const EventDetailedHeader = ({event, isGoing, isHost, goingToEvent, cancelGoingT
               {/* isHost means if the current user is not the host then hide the buttons */}
               {!isHost &&
                 <div>
-                  {isGoing ? (
-                    <Button onClick={() => cancelGoingToEvent(event)}>Cancel My Place</Button> ) : (
-                   
-                    <Button onClick={() => goingToEvent(event)} loading={loading} color="teal">JOIN THIS EVENT</Button>
+                  {isGoing &&
+                    <Button onClick={() => cancelGoingToEvent(event)}>Cancel My Place</Button> }
+                   {isGoing && authenticated && 
+                    <Button onClick={() => goingToEvent(event)} loading={loading} color="teal">JOIN THIS EVENT</Button>}
 
-                  )}
+                    {!authenticated &&
+                    <Button onClick={() => openModal('UnauthModal')} loading={loading} color="teal">JOIN THIS EVENT</Button>}
                 </div>}
         
 
