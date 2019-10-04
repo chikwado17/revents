@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { toastr } from 'react-redux-toastr';
 import { firestoreConnect, isEmpty } from 'react-redux-firebase';
 import {Button, Tab, Card, Grid, Header, Icon, Image, Item, List, Segment} from "semantic-ui-react";
 import format from 'date-fns/format';
@@ -62,6 +63,14 @@ class UserDetailedPage extends Component {
 
 
     async componentDidMount() {
+
+        //checking if a user exists else push to 404 error page
+        let user = await this.props.firestore.get(`users/${this.props.match.params.id}`);
+
+        if(!user.exists){
+            toastr.error('NOT FOUND', 'This is not the user you are looking for');
+            this.props.history.push('/error');
+        }
         await this.props.getUserEvents(this.props.userUid);
         
     }
@@ -77,7 +86,7 @@ class UserDetailedPage extends Component {
         const isCurrentUser = auth.uid === match.params.id;
 
         //loading component from checking requesting status from firestore status
-        const loading = Object.values(requesting).some((a) => a === true);
+        const loading = requesting[`users/${match.params.id}`]
 
         const isFollowing = !isEmpty(following)
 

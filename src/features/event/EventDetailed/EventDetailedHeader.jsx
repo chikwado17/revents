@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment, Image, Item, Button, Header } from 'semantic-ui-react';
+import { Segment, Image, Item, Button, Header, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
 
@@ -57,14 +57,19 @@ const EventDetailedHeader = ({event, isGoing, isHost, goingToEvent, cancelGoingT
               {/* isHost means if the current user is not the host then hide the buttons */}
               {!isHost &&
                 <div>
-                  {isGoing &&
+                  {isGoing && !event.cancelled &&
                     <Button onClick={() => cancelGoingToEvent(event)}>Cancel My Place</Button> }
-                   {isGoing && authenticated && 
+
+                   {!isGoing && authenticated && !event.cancelled &&
                     <Button onClick={() => goingToEvent(event)} loading={loading} color="teal">JOIN THIS EVENT</Button>}
 
-                    {!authenticated &&
+                    {!authenticated && !event.cancelled &&
                     <Button onClick={() => openModal('UnauthModal')} loading={loading} color="teal">JOIN THIS EVENT</Button>}
-                </div>}
+
+                      {event.cancelled && !isHost &&
+                      <Label size="large" color="red" content="This event has been cancelled"/>}
+                </div>
+              }
         
 
         {/* if the current user is the host it will display the manage event button */}
